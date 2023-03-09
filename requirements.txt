@@ -1,2 +1,4 @@
 prefect-gcp[cloud_storage, bigquery]
 polars
+google-cloud-bigquery
+google-cloud-storage

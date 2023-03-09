@@ -1,6 +1,6 @@
 import polars as pl
 
-schema = {
+PL_SCHEMA = {
     "id": pl.Utf8,
     "type": pl.Utf8,
     "actor": pl.Struct(
@@ -47,7 +47,7 @@ schema = {
         }
     ),
     "public": pl.Boolean,
-    "created_at": pl.Datetime,
+    "created_at": pl.Utf8,
     "org": pl.Struct(
         {
             "id": pl.Int32,
