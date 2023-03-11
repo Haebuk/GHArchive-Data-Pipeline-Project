@@ -15,11 +15,12 @@ from prefect_gcp.cloud_storage import GcsBucket
     cache_key_fn=task_input_hash,
     cache_expiration=timedelta(days=1),
 )
-def load_data_from_web(
+def extract_data_from_web(
     year: int, month: int, day: int, hour: int
 ) -> list[str]:
     headers = {"User-Agent": "Mozilla/5.0"}
-    url = f"https://data.gharchive.org/{year}-{month:02d}-{day:02d}-{hour}.json.gz"  # hour is 0-24
+    # hour is 0-23
+    url = f"https://data.gharchive.org/{year}-{month:02d}-{day:02d}-{hour}.json.gz"
 
     req = request.Request(url, headers=headers)
     response = request.urlopen(req)
@@ -30,44 +31,35 @@ def load_data_from_web(
 
 
 @task()
-def concat_data(data: list[str]) -> list[dict]:
+def transform_data(data: list[str], to_path: str) -> list[dict]:
+    from schema.schema_polars import PL_SCHEMA
+
     dicts = data.strip().split("\n")
 
     data_list = [json.loads(d) for d in dicts]
 
-    return data_list
+    df = pl.from_dicts(data_list, schema=PL_SCHEMA)
+
+    df = df.drop(["public", "payload"])
+
+    df.write_parquet(to_path)
 
 
 @task()
-def transform_data(data: list[dict]) -> pl.DataFrame:
-    from schema.schema_polars import PL_SCHEMA
+def load_to_gcs(file_path: str) -> None:
+    # dir = f"data/{year}/{month:02d}/{day:02d}"
 
-    df = pl.from_dicts(data, schema=PL_SCHEMA)
+    # os.makedirs(dir, exist_ok=True)
 
-    df = df.with_columns(
-        df["created_at"]
-        .str.strptime(pl.Datetime, "%Y-%m-%dT%H:%M:%SZ")
-        .alias("created_at")
-    ).drop("public")
-
-    return df
-
-
-@task()
-def load_to_gcs(
-    df: pl.DataFrame, year: int, month: int, day: int, hour: int
-) -> None:
-    dir = f"data/{year}/{month:02d}/{day:02d}"
-    file_path = f"{dir}/{hour:02d}.parquet"
-
-    os.makedirs(dir, exist_ok=True)
-
-    df.write_parquet(file_path)
+    # df.write_parquet(file_path)
 
     gcs_bucket = GcsBucket.load("github-gcs")
-    gcs_bucket.put_directory(local_path=file_path, to_path=file_path)
+    gcs_bucket.upload_from_path(
+        from_path=file_path,
+        to_path=file_path,
+    )
 
-    os.remove(file_path)
+    # os.remove(file_path)
 
     print(f"File {file_path} uploaded to GCS.")
 
@@ -82,16 +74,23 @@ def etl_web_to_gcs(
     for month in months:
         for day in days:
             for hour in hours:
-                data = load_data_from_web(year, month, day, hour)
-                data_list = concat_data(data)
-                df = transform_data(data_list)
-                load_to_gcs(df, year, month, day, hour)
+                dir_name = f"data/{year}/{month:02d}/{day:02d}"
+                if os.path.exists(f"{dir_name}/{hour:02d}.parquet"):
+                    continue
+                data = extract_data_from_web(year, month, day, hour)
+                transform_data(
+                    data, to_path=f"{dir_name}/{hour:02d}.parquet"
+                )
+                load_to_gcs(file_path=f"{dir_name}/{hour:02d}.parquet")
 
 
 if __name__ == "__main__":
+    months = [1]
+    days = [i for i in range(1, 32)]
+    hours = [i for i in range(24)]
     etl_web_to_gcs(
         year=2023,
-        months=[1],
-        days=[1],
-        hours=[1],
+        months=months,
+        days=days,
+        hours=hours,
     )
