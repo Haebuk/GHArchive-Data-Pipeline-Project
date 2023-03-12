@@ -1,10 +1,11 @@
 import os
 import gzip
 import json
+import pendulum
+from datetime import timedelta
 from urllib import request
-from datetime import datetime, timedelta
 
-import polars as pl
+from prefect.context import get_run_context
 from prefect import flow, task
 from prefect.tasks import task_input_hash
 from prefect_gcp.cloud_storage import GcsBucket
@@ -60,9 +61,11 @@ def etl_web_to_gcs(
 ) -> None:
     if execution_date is None:
         # default to 1 hour ago. github data not avaialble for current hour
-        execution_date = datetime.utcnow() - timedelta(hours=1)
+        execution_date = get_run_context().start_time - timedelta(hours=1)
     else:
-        execution_date = datetime.strptime(execution_date, "%Y-%m-%d-%H")
+        execution_date = pendulum.from_format(
+            execution_date, "YYYY-MM-DD-HH"
+        )
 
     year = execution_date.year
     month = execution_date.month

@@ -34,3 +34,18 @@ then activate the venv and set the workspace.
 
 Make the GCP Credentials block and GCS Bucket block. 
 these blocks are used to ETL pipeline in the Prefect.
+
+
+### 4. VM
+```
+$ sudo apt-get update
+$ sudo apt-get install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
+$ wget https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tar.xz
+$ tar -xf Python-3.11.2.tar.xz
+$ cd Python-3.11.2
+$ ./configure --enable-optimizations
+$ sudo make altinstall
+
+
+
+```
