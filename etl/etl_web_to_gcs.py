@@ -2,7 +2,7 @@ import os
 import gzip
 import json
 from urllib import request
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import polars as pl
 from prefect import flow, task
@@ -17,42 +17,32 @@ from prefect_gcp.cloud_storage import GcsBucket
 )
 def extract_data_from_web(
     year: int, month: int, day: int, hour: int
-) -> list[str]:
+) -> None:
     headers = {"User-Agent": "Mozilla/5.0"}
     # hour is 0-23
     url = f"https://data.gharchive.org/{year}-{month:02d}-{day:02d}-{hour}.json.gz"
-
+    print(f"Extracting data from {url}...")
     req = request.Request(url, headers=headers)
     response = request.urlopen(req)
 
     data = gzip.decompress(response.read()).decode()
 
-    return data
-
-
-@task()
-def transform_data(data: list[str], to_path: str) -> list[dict]:
-    from schema.schema_polars import PL_SCHEMA
-
     dicts = data.strip().split("\n")
 
-    data_list = [json.loads(d) for d in dicts]
+    data_list = []
+    for d in dicts:
+        # remove payload key in dict
+        d = json.loads(d)
+        d.pop("payload")
+        data_list.append(d)
 
-    df = pl.from_dicts(data_list, schema=PL_SCHEMA)
-
-    df = df.drop(["public", "payload"])
-
-    df.write_parquet(to_path)
+    file_name = f"data/{year}/{month:02d}/{day:02d}/{hour:02d}.json.gz"
+    with gzip.open(file_name, "wt", encoding="utf-8") as f:
+        json.dump(data_list, f)
 
 
-@task()
+@task(retries=2)
 def load_to_gcs(file_path: str) -> None:
-    # dir = f"data/{year}/{month:02d}/{day:02d}"
-
-    # os.makedirs(dir, exist_ok=True)
-
-    # df.write_parquet(file_path)
-
     gcs_bucket = GcsBucket.load("github-gcs")
     gcs_bucket.upload_from_path(
         from_path=file_path,
@@ -66,31 +56,27 @@ def load_to_gcs(file_path: str) -> None:
 
 @flow()
 def etl_web_to_gcs(
-    year: int = 2023,
-    months: list[int] = None,
-    days: list[int] = None,
-    hours: list[int] = None,
+    execution_date: str = None,
 ) -> None:
-    for month in months:
-        for day in days:
-            for hour in hours:
-                dir_name = f"data/{year}/{month:02d}/{day:02d}"
-                if os.path.exists(f"{dir_name}/{hour:02d}.parquet"):
-                    continue
-                data = extract_data_from_web(year, month, day, hour)
-                transform_data(
-                    data, to_path=f"{dir_name}/{hour:02d}.parquet"
-                )
-                load_to_gcs(file_path=f"{dir_name}/{hour:02d}.parquet")
+    if execution_date is None:
+        # default to 1 hour ago. github data not avaialble for current hour
+        execution_date = datetime.utcnow() - timedelta(hours=1)
+    else:
+        execution_date = datetime.strptime(execution_date, "%Y-%m-%d-%H")
+
+    year = execution_date.year
+    month = execution_date.month
+    day = execution_date.day
+    hour = execution_date.hour
+
+    print(f"execution_date: {year}-{month:02d}-{day:02d}-{hour:02d}")
+
+    dir_name = f"data/{year}/{month:02d}/{day:02d}"
+
+    os.makedirs(dir_name, exist_ok=True)
+    extract_data_from_web(year, month, day, hour)
+    load_to_gcs(file_path=f"{dir_name}/{hour:02d}.json.gz")
 
 
 if __name__ == "__main__":
-    months = [1]
-    days = [i for i in range(1, 32)]
-    hours = [i for i in range(24)]
-    etl_web_to_gcs(
-        year=2023,
-        months=months,
-        days=days,
-        hours=hours,
-    )
+    etl_web_to_gcs()
