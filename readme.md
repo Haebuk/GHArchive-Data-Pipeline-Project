@@ -39,13 +39,17 @@ these blocks are used to ETL pipeline in the Prefect.
 ### 4. VM
 ```
 $ sudo apt-get update
-$ sudo apt-get install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
+$ sudo apt-get install -y libbz2-dev build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev  wget libsqlite3-dev
 $ wget https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tar.xz
 $ tar -xf Python-3.11.2.tar.xz
 $ cd Python-3.11.2
 $ ./configure --enable-optimizations
 $ sudo make altinstall
-
-
+```
 
 ```
+$ prefect cloud login -k {MYAPIKEY}
+$ prefect agent start -p default-agent-pool
+```
+
+- todo: vm에 코드를 디플로이 할 수 있도록 ci/cd 환경 구성하기.
