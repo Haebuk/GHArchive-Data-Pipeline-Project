@@ -53,3 +53,8 @@ $ prefect agent start -p default-agent-pool
 ```
 
 - todo: vm에 코드를 디플로이 할 수 있도록 ci/cd 환경 구성하기.
+- https://docs.prefect.io/concepts/deployments/
+
+```
+prefect deployment build etl/etl_web_to_gcs.py:etl_web_to_gcs -n etl_github_data_to_gcs -p gh-agent-pool -q default -sb gcs-bucket/github-flow --cron "30 * * * *" -a
+```
