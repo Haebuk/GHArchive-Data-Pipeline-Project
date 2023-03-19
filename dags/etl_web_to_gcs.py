@@ -33,6 +33,7 @@ def etl_web_to_gcs_dag():
         os.makedirs(dir_name, exist_ok=True)
         return dir_name
 
+    @task()
     def get_file_path(**context):
         hour = context["ts_nodash"].split("T")[1][:2]
         dir_name = context["ti"].xcom_pull(task_ids="start")
