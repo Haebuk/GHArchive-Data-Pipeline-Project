@@ -69,6 +69,7 @@ def etl_web_to_gcs_dag():
             json.dump(data_list, f)
 
     load_to_gcs = LocalFilesystemToGCSOperator(
+        task_id="load_to_gcs",
         src="{{ ti.xcom_pull(task_ids='get_file_path') }}",
         dst="{{ ti.xcom_pull(task_ids='get_file_path') }}",
         bucket="github_data_silken-quasar-350808",
