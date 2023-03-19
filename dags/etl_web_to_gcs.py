@@ -29,7 +29,7 @@ def etl_web_to_gcs_dag():
 
         dir_name = f"data/{year}/{month:02d}/{day:02d}"
 
-        os.makedirs(dir_name, exist_ok=True)
+        os.makedirs(f"/tmp/{dir_name}", exist_ok=True)
         return dir_name
 
     @task()
