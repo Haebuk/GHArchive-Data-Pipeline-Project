@@ -35,6 +35,9 @@ then activate the venv and set the workspace.
 Make the GCP Credentials block and GCS Bucket block. 
 these blocks are used to ETL pipeline in the Prefect.
 
+### 3. Airflow
+https://github.com/keeyong/data-engineering-batch11/blob/main/docs/Airflow%202%20Installation.md
+
 
 ### 4. VM
 ```

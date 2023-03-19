@@ -1,5 +1,2 @@
-prefect-gcp[cloud_storage, bigquery]
+apache-airflow[google]==2.5.1
 polars
-google-cloud-bigquery
-google-cloud-storage
-gcsfs
