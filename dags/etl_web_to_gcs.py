@@ -25,8 +25,7 @@ default_args = {
 def etl_web_to_gcs_dag():
     @task()
     def start(**context):
-        exec_date = context["ds"]
-        year, month, day = map(exec_date.split("-"), int)
+        year, month, day = map(int, context["ds"].split("-"))
 
         dir_name = f"data/{year}/{month:02d}/{day:02d}"
 
@@ -41,7 +40,7 @@ def etl_web_to_gcs_dag():
 
     @task(retries=2)
     def extract_data_from_web(**context) -> None:
-        year, month, day = map(context["ds"].split("-"), int)
+        year, month, day = map(int, context["ds"].split("-"))
         hour = int(context["ts_nodash"].split("T")[1][:2])
 
         headers = {"User-Agent": "Mozilla/5.0"}
