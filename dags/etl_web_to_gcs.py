@@ -65,19 +65,19 @@ def etl_web_to_gcs_dag():
         file_name = context["ti"].xcom_pull(task_ids="get_file_path")
         print(f"file name: {file_name}")
 
-        with gzip.open(file_name, "wt", encoding="utf-8") as f:
+        with gzip.open(f"/tmp/{file_name}", "wt", encoding="utf-8") as f:
             json.dump(data_list, f)
 
     load_to_gcs = LocalFilesystemToGCSOperator(
         task_id="load_to_gcs",
-        src="{{ ti.xcom_pull(task_ids='get_file_path') }}",
+        src="/tmp/{{ ti.xcom_pull(task_ids='get_file_path') }}",
         dst="{{ ti.xcom_pull(task_ids='get_file_path') }}",
         bucket="github_data_silken-quasar-350808",
     )
 
     clean_up = BashOperator(
         task_id="clean_up",
-        bash_command="rm -rf {{ ti.xcom_pull(task_ids='get_file_path') }}",
+        bash_command="rm -rf /tmp/{{ ti.xcom_pull(task_ids='get_file_path') }}",
     )
 
     (
