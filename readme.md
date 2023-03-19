@@ -35,6 +35,12 @@ then activate the venv and set the workspace.
 Make the GCP Credentials block and GCS Bucket block. 
 these blocks are used to ETL pipeline in the Prefect.
 
+### 3. Airflow
+https://github.com/keeyong/data-engineering-batch11/blob/main/docs/Airflow%202%20Installation.md
+```
+sudo pip3 install --ignore-installed "apache-airflow[celery]==2.5.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.1/constraints-3.7.txt"
+```
+
 
 ### 4. VM
 ```
