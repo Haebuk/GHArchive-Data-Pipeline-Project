@@ -9,6 +9,7 @@ from prefect.context import get_run_context
 from prefect import flow, task
 from prefect.tasks import task_input_hash
 from prefect_gcp.cloud_storage import GcsBucket
+from prefect.filesystems import GCS
 
 
 @task(
@@ -82,4 +83,8 @@ def etl_web_to_gcs(
 
 
 if __name__ == "__main__":
-    etl_web_to_gcs()
+    flow = etl_web_to_gcs.with_options(
+        result_storage=GCS(bucket_path="github_data_silken-quasar-350808"),
+    )
+    
+    flow()

@@ -3,7 +3,7 @@
 ###
 name: etl_github_data_to_gcs
 description: null
-version: 2a37c6f92f55b2ce2c6c83348d576a4c
+version: 7ade92e84846cc4a9975e0f7389cf336
 # The work queue that will handle this deployment's runs
 work_queue_name: default
 work_pool_name: gh-agent-pool
@@ -13,14 +13,8 @@ schedule:
   cron: 30 * * * *
   timezone: null
   day_or: true
-is_schedule_active: false
+is_schedule_active: null
 infra_overrides: {}
-
-###
-### DO NOT EDIT BELOW THIS LINE
-###
-flow_name: etl-web-to-gcs
-manifest_path: null
 infrastructure:
   type: process
   env: {}
@@ -29,11 +23,14 @@ infrastructure:
   command: null
   stream_output: true
   working_dir: null
-  _block_document_id: e5d5eb32-e8af-4b40-9000-ca0a45cc86b1
-  _block_document_name: anonymous-0cab58f8-b4c0-4da0-8982-29e94a7a5060
-  _is_anonymous: true
   block_type_slug: process
   _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: etl-web-to-gcs
+manifest_path: null
 storage:
   bucket: github_data_silken-quasar-350808
   gcp_credentials:
@@ -73,4 +70,4 @@ parameter_openapi_schema:
       type: string
   required: null
   definitions: null
-timestamp: '2023-03-15T14:45:25.525896+00:00'
+timestamp: '2023-03-19T11:20:15.916929+00:00'

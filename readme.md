@@ -46,15 +46,43 @@ $ cd Python-3.11.2
 $ ./configure --enable-optimizations
 $ sudo make altinstall
 ```
-
+- login prefect cloud in vm
 ```
 $ prefect cloud login -k {MYAPIKEY}
-$ prefect agent start -p default-agent-pool
 ```
 
-- todo: vm에 코드를 디플로이 할 수 있도록 ci/cd 환경 구성하기.
-- https://docs.prefect.io/concepts/deployments/
+```
+gcloud compute instances create-with-container prefect-agent-server \
+		--container-image prefecthq/prefect:2-python3.10 \
+		--container-mount-host-path=host-path=/var/run/docker.sock,mount-path=/var/run/docker.sock,mode=rw \
+		--container-privileged \
+		--container-env PREFECT_API_URL=${PREFECT_API_URL} \
+		--container-env PREFECT_API_KEY=${PREFECT_API_KEY} \
+		--container-command="prefect" \
+		--container-arg="agent" \
+		--container-arg="start" \
+        --container-arg="-p" \
+        --container-arg="gh-agent-pool" \
+		--container-arg="-q" \
+		--container-arg="default" \
+		--container-restart-policy='always' \
+		--boot-disk-size="100Gi" \
+		--machine-type="e2-medium" \
+		--zone="asia-northeast3-a"
 
+```
+
+## Deployment
 ```
 prefect deployment build etl/etl_web_to_gcs.py:etl_web_to_gcs -n etl_github_data_to_gcs -p gh-agent-pool -q default -sb gcs-bucket/github-flow --cron "30 * * * *" -a
 ```
+
+```
+prefect deployment build etl/etl_web_to_gcs.py:etl_web_to_gcs -n etl_github_data_to_gcs_in_gce -p gh-agent-pool -q default --cron "30 * * * *" -a
+```
+
+- start agent in vm
+```
+prefect agent start -p gh-agent-pool -q default
+```
+
