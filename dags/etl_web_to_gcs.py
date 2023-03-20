@@ -68,28 +68,25 @@ def etl_web_to_gcs_dag():
 
         # print("append data complete")
 
-        file_name = context["ti"].xcom_pull(task_ids="get_file_path")
-        print(f"file name: {file_name}")
-
         # with gzip.open(f"/tmp/{file_name}", "wt", encoding="utf-8") as f:
         #     json.dump(data_list, f)
 
-        with open(file_name, "w") as outfile:
+        with open(f"/tmp/{file_name}", "w") as outfile:
             outfile.write("[")
-            
+
             first_dict = True
-            
+
             for line in data.split("\n"):
                 if not first_dict:
                     outfile.write(",")
-                    
+
                 d = json.loads(line)
                 d.pop("payload")
-                
+
                 json.dump(d, outfile)
-                
+
                 first_dict = False
-                
+
             outfile.write("]")
 
         print("Data extraction and writing complete.")
