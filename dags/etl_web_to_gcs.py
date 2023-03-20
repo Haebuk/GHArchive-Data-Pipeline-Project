@@ -51,14 +51,14 @@ def etl_web_to_gcs_dag():
         req = request.Request(url, headers=headers)
         response = request.urlopen(req)
 
-        data = gzip.decompress(response.read()).decode()
+        data = gzip.decompress(response.read()).decode().strip()
         print("decompressed complete.")
 
         file_name = context["ti"].xcom_pull(task_ids="get_file_path")
         print(f"file name: {file_name}")
 
-        dicts = data.strip().split("\n")
-        print("split completed.")
+        # dicts = data.strip().split("\n")
+        # print("split completed.")
 
         # for d in dicts:
         #     # remove payload key in dict
@@ -76,14 +76,20 @@ def etl_web_to_gcs_dag():
 
         with open(file_name, "w") as outfile:
             outfile.write("[")
+            
             first_dict = True
-            for d in dicts:
+            
+            for line in data.split("\n"):
                 if not first_dict:
                     outfile.write(",")
-                d = json.dumps(d)
+                    
+                d = json.loads(line)
                 d.pop("payload")
+                
                 json.dump(d, outfile)
+                
                 first_dict = False
+                
             outfile.write("]")
 
         print("Data extraction and writing complete.")
