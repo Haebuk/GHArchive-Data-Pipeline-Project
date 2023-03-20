@@ -1,7 +1,6 @@
 import os
 import gzip
 import json
-import requests
 from datetime import datetime
 from urllib import request
 
@@ -39,8 +38,6 @@ def etl_web_to_gcs_dag():
         dir_name = context["ti"].xcom_pull(task_ids="start")
         return f"{dir_name}/{hour}.json.gz"
 
-    def save_dicts_to_json_file(dicts_list, filename):
-
     @task(retries=2)
     def extract_data_from_web(**context) -> None:
         year, month, day = map(int, context["ds"].split("-"))
@@ -56,7 +53,7 @@ def etl_web_to_gcs_dag():
 
         data = gzip.decompress(response.read()).decode()
         print("decompressed complete.")
-        
+
         file_name = context["ti"].xcom_pull(task_ids="get_file_path")
         print(f"file name: {file_name}")
 
@@ -88,7 +85,6 @@ def etl_web_to_gcs_dag():
             outfile.write("]")
 
         print("Data extraction and writing complete.")
-
 
     load_to_gcs = LocalFilesystemToGCSOperator(
         task_id="load_to_gcs",
