@@ -1,6 +1,7 @@
 import os
 import gzip
 import json
+import requests
 from datetime import datetime
 from urllib import request
 
@@ -38,6 +39,17 @@ def etl_web_to_gcs_dag():
         dir_name = context["ti"].xcom_pull(task_ids="start")
         return f"{dir_name}/{hour}.json.gz"
 
+    # def save_dicts_to_json_file(dicts_list, filename):
+    #     with open(filename, "w") as outfile:
+    #         outfile.write("[")
+    #         first_dict = True
+    #         for d in dicts_list:
+    #             if not first_dict:
+    #                 outfile.write(",")
+    #             json.dump(d, outfile)
+    #             first_dict = False
+    #         outfile.write("]")
+
     @task(retries=2)
     def extract_data_from_web(**context) -> None:
         year, month, day = map(int, context["ds"].split("-"))
@@ -51,22 +63,50 @@ def etl_web_to_gcs_dag():
         req = request.Request(url, headers=headers)
         response = request.urlopen(req)
 
-        data = gzip.decompress(response.read()).decode()
-
-        dicts = data.strip().split("\n")
-
-        data_list = []
-        for d in dicts:
-            # remove payload key in dict
-            d = json.loads(d)
-            d.pop("payload")
-            data_list.append(d)
-
         file_name = context["ti"].xcom_pull(task_ids="get_file_path")
         print(f"file name: {file_name}")
 
-        with gzip.open(f"/tmp/{file_name}", "wt", encoding="utf-8") as f:
-            json.dump(data_list, f)
+        chunk_size = 1024 * 1024  # read and write data in 1MB chunks
+        with requests.get(url, headers=headers, stream=True) as response:
+            with gzip.open(
+                f"/tmp/{file_name}", "wt", encoding="utf-8"
+            ) as f:
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    if chunk:
+                        # decompress and decode the chunk
+                        data = gzip.decompress(chunk).decode()
+                        dicts = data.strip().split("\n")
+                        for d in dicts:
+                            # remove payload key in dict
+                            d = json.loads(d)
+                            d.pop("payload")
+                            json.dump(d, f)
+                            f.write("\n")
+                            
+        print("Data extraction and writing complete.")
+
+
+        # data = gzip.decompress(response.read()).decode()
+        # print("decompressed complete.")
+
+        # dicts = data.strip().split("\n")
+
+        # data_list = []
+        # for d in dicts:
+        #     # remove payload key in dict
+        #     d = json.loads(d)
+        #     d.pop("payload")
+        #     data_list.append(d)
+
+        # print("append data complete")
+
+        # file_name = context["ti"].xcom_pull(task_ids="get_file_path")
+        # print(f"file name: {file_name}")
+
+        # with gzip.open(f"/tmp/{file_name}", "wt", encoding="utf-8") as f:
+        #     json.dump(data_list, f)
+
+        # print("data saved to local")
 
     load_to_gcs = LocalFilesystemToGCSOperator(
         task_id="load_to_gcs",
