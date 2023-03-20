@@ -80,15 +80,6 @@ gcloud compute instances create-with-container prefect-agent-server \
 
 ## Deployment
 ```
-prefect deployment build etl/etl_web_to_gcs.py:etl_web_to_gcs -n etl_github_data_to_gcs -p gh-agent-pool -q default -sb gcs-bucket/github-flow --cron "30 * * * *" -a
-```
-
-```
-prefect deployment build etl/etl_web_to_gcs.py:etl_web_to_gcs -n etl_github_data_to_gcs_in_gce -p gh-agent-pool -q default --cron "30 * * * *" -a
-```
-
-- start agent in vm
-```
-prefect agent start -p gh-agent-pool -q default
+cd GHArchive-Data-Pipeline-Project/ && git pull && cd .. && cp -r GHArchive-Data-Pipeline-Project/dags/* dags/
 ```
 
