@@ -38,7 +38,7 @@ def etl_web_to_gcs_dag():
         dir_name = context["ti"].xcom_pull(task_ids="start")
         return f"{dir_name}/{hour}.json.gz"
 
-    @task(retries=2)
+    @task(retries=1)
     def extract_data_from_web(**context) -> None:
         year, month, day = map(int, context["ds"].split("-"))
         hour = int(context["ts_nodash"].split("T")[1][:2])
@@ -58,15 +58,15 @@ def etl_web_to_gcs_dag():
         print(f"file name: {file_name}")
 
         dicts = data.strip().split("\n")
+        print("split completed.")
 
-        data_list = []
-        for d in dicts:
-            # remove payload key in dict
-            d = json.loads(d)
-            d.pop("payload")
-            data_list.append(d)
+        # for d in dicts:
+        #     # remove payload key in dict
+        #     d = json.loads(d)
+        #     d.pop("payload")
+        #     data_list.append(d)
 
-        print("append data complete")
+        # print("append data complete")
 
         file_name = context["ti"].xcom_pull(task_ids="get_file_path")
         print(f"file name: {file_name}")
@@ -80,6 +80,8 @@ def etl_web_to_gcs_dag():
             for d in data_list:
                 if not first_dict:
                     outfile.write(",")
+                d = json.dumps(d)
+                d.pop("payload")
                 json.dump(d, outfile)
                 first_dict = False
             outfile.write("]")
