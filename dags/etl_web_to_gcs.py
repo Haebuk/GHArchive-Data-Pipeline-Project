@@ -77,7 +77,7 @@ def etl_web_to_gcs_dag():
         with open(file_name, "w") as outfile:
             outfile.write("[")
             first_dict = True
-            for d in data_list:
+            for d in dicts:
                 if not first_dict:
                     outfile.write(",")
                 d = json.dumps(d)
