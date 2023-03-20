@@ -71,7 +71,9 @@ def etl_web_to_gcs_dag():
         # with gzip.open(f"/tmp/{file_name}", "wt", encoding="utf-8") as f:
         #     json.dump(data_list, f)
 
-        with open(f"/tmp/{file_name}", "w") as outfile:
+        with gzip.open(
+            f"/tmp/{file_name}", "wt", encoding="utf-8"
+        ) as outfile:
             outfile.write("[")
 
             first_dict = True
