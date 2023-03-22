@@ -2,7 +2,9 @@
 - My Dataset Link: https://www.gharchive.org/
 - Dataset schema: https://github.com/igrigorik/gharchive.org/blob/master/bigquery/schema.js
 
-
+```
+wget https://data.gharchive.org/2023-03-{17..19}-{0..23}.json.gz
+```
 
 ## Initialization
 
