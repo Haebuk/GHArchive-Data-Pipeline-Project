@@ -16,11 +16,11 @@ default_args = {
 
 @dag(
     default_args=default_args,
-    start_date=datetime(2023, 3, 21),
+    start_date=datetime(2023, 3, 20),
     schedule_interval="30 * * * *",
     tags=["etl", "gcs"],
 )
-def etl_gharchive_to_gcs_dag():
+def etl_github_archive_to_gcs_dag():
     @task()
     def start(**context) -> dict[str, str]:
         year, month, day = map(int, context["ds"].split("-"))
@@ -125,4 +125,4 @@ def etl_gharchive_to_gcs_dag():
     )
 
 
-etl_gharchive_to_gcs_dag()
+etl_github_archive_to_gcs_dag()
