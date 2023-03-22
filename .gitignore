@@ -2,3 +2,4 @@ data
 .ipynb_checkpoints
 *.parquet
 *.json
+*.json.gz
