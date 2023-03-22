@@ -79,7 +79,7 @@ def etl_gharchive_to_gcs_dag():
                     actor,
                     repo,
                     strptime(created_at, '%Y-%m-%dT%H:%M:%SZ') as created_at,
-                from read_ndjson({local_json_gz_path}, columns={DUCKDB_SCHEMA})
+                from read_ndjson('{local_json_gz_path}', columns={DUCKDB_SCHEMA})
             """
         )
 
