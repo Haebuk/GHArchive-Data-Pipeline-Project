@@ -22,7 +22,7 @@ resource "google_storage_bucket" "data-lake-bucket" {
   uniform_bucket_level_access = true
 
   versioning {
-    enabled     = true
+    enabled     = false
   }
 
   lifecycle_rule {
@@ -34,7 +34,7 @@ resource "google_storage_bucket" "data-lake-bucket" {
     }
   }
 
-  force_destroy = true
+  force_destroy = false
 }
 
 # DWH
