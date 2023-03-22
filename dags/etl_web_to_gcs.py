@@ -106,7 +106,7 @@ def etl_gharchive_to_gcs_dag():
 
     clean_up_parquet = BashOperator(
         task_id="clean_up_parquet",
-        bash_command="rm -rf {{ ti.xcom_pull(task_ids='get_file_paths', key=', key='local_parquet_path'') }}",
+        bash_command="rm -rf {{ ti.xcom_pull(task_ids='get_file_paths', key='local_parquet_path'') }}",
     )
 
     get_dir_name_dict = start()
