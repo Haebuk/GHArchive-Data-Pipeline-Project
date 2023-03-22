@@ -1,9 +1,5 @@
 import os
-import gzip
-import json
 from datetime import datetime
-
-# from urllib import request
 import requests
 
 from airflow.decorators import dag, task
@@ -20,11 +16,11 @@ default_args = {
 
 @dag(
     default_args=default_args,
-    start_date=datetime(2023, 3, 1),
+    start_date=datetime(2023, 3, 21),
     schedule_interval="30 * * * *",
     tags=["etl", "gcs"],
 )
-def etl_web_to_gcs_dag():
+def etl_gharchive_to_gcs_dag():
     @task()
     def start(**context):
         year, month, day = map(int, context["ds"].split("-"))
@@ -87,6 +83,8 @@ def etl_web_to_gcs_dag():
             """
         )
 
+        df.show()
+
         parquet_path = file_path.replace(".json.gz", ".parquet")
 
         duckdb.sql(
@@ -124,4 +122,4 @@ def etl_web_to_gcs_dag():
     )
 
 
-etl_web_to_gcs_dag()
+etl_gharchive_to_gcs_dag()
