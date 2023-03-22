@@ -44,3 +44,25 @@ resource "google_bigquery_dataset" "dataset" {
   project    = var.project
   location   = var.region
 }   
+
+# External Table
+resource "google_bigquery_table" "gharchive" {
+  dataset_id = google_bigquery_dataset.dataset.dataset_id
+  table_id   = "gharchive"
+
+  
+
+  external_data_configuration {
+    autodetect    = true
+    source_format = "PARQUET"
+
+    source_uris = [
+      "gs://${local.data_lake_bucket}_${var.project}/data/*",
+    ]
+
+    hive_partitioning_options {
+      mode = "AUTO"
+      source_uri_prefix = "gs://${local.data_lake_bucket}_${var.project}/data/"
+    }
+  }
+}
