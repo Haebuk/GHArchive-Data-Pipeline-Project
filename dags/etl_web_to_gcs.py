@@ -117,6 +117,7 @@ def etl_web_to_gcs_dag():
     (
         start
         >> [get_file_json_gz_path(), get_file_parquet_path()]
+        >> extract_data_from_web()
         >> transform_data()
         >> load_to_gcs
         >> [clean_up_json_gz, clean_up_parquet]
