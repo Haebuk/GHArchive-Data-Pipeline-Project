@@ -104,12 +104,12 @@ def etl_web_to_gcs_dag():
     )
 
     clean_up_json_gz = BashOperator(
-        task_id="clean_up",
+        task_id="clean_up_json_gz",
         bash_command="rm -rf /tmp/{{ ti.xcom_pull(task_ids='get_file_json_gz_path') }}",
     )
 
     clean_up_parquet = BashOperator(
-        task_id="clean_up",
+        task_id="clean_up_parquet",
         bash_command="rm -rf /tmp/{{ ti.xcom_pull(task_ids='get_file_parquet_path') }}",
     )
 
