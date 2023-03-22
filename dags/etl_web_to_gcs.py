@@ -2,7 +2,9 @@ import os
 import gzip
 import json
 from datetime import datetime
-from urllib import request
+
+# from urllib import request
+import requests
 
 from airflow.decorators import dag, task
 from airflow.operators.bash import BashOperator
@@ -33,10 +35,16 @@ def etl_web_to_gcs_dag():
         return dir_name
 
     @task()
-    def get_file_path(**context):
+    def get_file_json_gz_path(**context):
         hour = context["ts_nodash"].split("T")[1][:2]
         dir_name = context["ti"].xcom_pull(task_ids="start")
         return f"{dir_name}/{hour}.json.gz"
+
+    @task()
+    def get_file_parquet_path(**context):
+        hour = context["ts_nodash"].split("T")[1][:2]
+        dir_name = context["ti"].xcom_pull(task_ids="start")
+        return f"{dir_name}/{hour}.parquet"
 
     @task(retries=1)
     def extract_data_from_web(**context) -> None:
@@ -48,69 +56,70 @@ def etl_web_to_gcs_dag():
         # hour is 0-23
         url = f"https://data.gharchive.org/{year}-{month:02d}-{day:02d}-{hour}.json.gz"
         print(f"Extracting data from {url}...")
-        req = request.Request(url, headers=headers)
-        response = request.urlopen(req)
+        data = requests.get(url, headers=headers).content
 
-        data = gzip.decompress(response.read()).decode().strip()
-        print("decompressed complete.")
-
-        file_name = context["ti"].xcom_pull(task_ids="get_file_path")
+        file_name = context["ti"].xcom_pull(
+            task_ids="get_file_json_gz_path"
+        )
         print(f"file name: {file_name}")
 
-        # dicts = data.strip().split("\n")
-        # print("split completed.")
+        with open(f"/tmp/{file_name}", "wb") as outfile:
+            outfile.write(data)
 
-        # for d in dicts:
-        #     # remove payload key in dict
-        #     d = json.loads(d)
-        #     d.pop("payload")
-        #     data_list.append(d)
+    @task()
+    def transform_data(**context):
+        import duckdb
+        from schema.schema_duckdb import DUCKDB_SCHEMA
 
-        # print("append data complete")
+        file_path = context["ti"].xcom_pull(
+            task_ids="get_file_json_gz_path"
+        )
 
-        # with gzip.open(f"/tmp/{file_name}", "wt", encoding="utf-8") as f:
-        #     json.dump(data_list, f)
+        df = duckdb.sql(
+            f"""
+                select
+                    id,
+                    type,
+                    actor,
+                    repo,
+                    strptime(created_at, '%Y-%m-%dT%H:%M:%SZ') as created_at,
+                from read_ndjson('{file_path}', columns={DUCKDB_SCHEMA})
+            """
+        )
 
-        with gzip.open(
-            f"/tmp/{file_name}", "wt", encoding="utf-8"
-        ) as outfile:
-            outfile.write("[")
+        parquet_path = file_path.replace(".json.gz", ".parquet")
 
-            first_dict = True
-
-            for line in data.split("\n"):
-                if not first_dict:
-                    outfile.write(",")
-
-                d = json.loads(line)
-                d.pop("payload")
-
-                json.dump(d, outfile)
-
-                first_dict = False
-
-            outfile.write("]")
-
-        print("Data extraction and writing complete.")
+        duckdb.sql(
+            f"""
+            copy df 
+            to '{parquet_path}' (format parquet)
+            """
+        )
 
     load_to_gcs = LocalFilesystemToGCSOperator(
         task_id="load_to_gcs",
-        src="/tmp/{{ ti.xcom_pull(task_ids='get_file_path') }}",
-        dst="{{ ti.xcom_pull(task_ids='get_file_path') }}",
+        src="/tmp/{{ ti.xcom_pull(task_ids='get_file_parquet_path') }}",
+        dst="{{ ti.xcom_pull(task_ids='get_file_parquet_path') }}",
         bucket="github_data_silken-quasar-350808",
     )
 
-    clean_up = BashOperator(
+    clean_up_json_gz = BashOperator(
         task_id="clean_up",
-        bash_command="rm -rf /tmp/{{ ti.xcom_pull(task_ids='get_file_path') }}",
+        bash_command="rm -rf /tmp/{{ ti.xcom_pull(task_ids='get_file_json_gz_path') }}",
     )
 
+    clean_up_parquet = BashOperator(
+        task_id="clean_up",
+        bash_command="rm -rf /tmp/{{ ti.xcom_pull(task_ids='get_file_parquet_path') }}",
+    )
+
+    start = start()
     (
-        start()
-        >> get_file_path()
-        >> extract_data_from_web()
+        start
+        >> [get_file_json_gz_path(), get_file_parquet_path()]
+        >> transform_data()
         >> load_to_gcs
-        >> clean_up
+        >> [clean_up_json_gz, clean_up_parquet]
     )
 
 
