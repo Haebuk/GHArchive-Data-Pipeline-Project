@@ -83,7 +83,7 @@ def etl_web_to_gcs_dag():
                     actor,
                     repo,
                     strptime(created_at, '%Y-%m-%dT%H:%M:%SZ') as created_at,
-                from read_ndjson('{file_path}', columns={DUCKDB_SCHEMA})
+                from read_ndjson('/tmp/{file_path}', columns={DUCKDB_SCHEMA})
             """
         )
 
@@ -92,7 +92,7 @@ def etl_web_to_gcs_dag():
         duckdb.sql(
             f"""
             copy df 
-            to '{parquet_path}' (format parquet)
+            to '/tmp/{parquet_path}' (format parquet)
             """
         )
 
