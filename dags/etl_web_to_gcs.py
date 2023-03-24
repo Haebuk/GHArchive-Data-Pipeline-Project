@@ -28,7 +28,7 @@ def etl_github_archive_data_to_gcs_dag():
         local_dir_name = f"/tmp/data/{year}/{month:02d}/{day:02d}"
         gcs_dir_name = f"data/year={year}/month={month:02d}/day={day:02d}"
 
-        os.makedirs(f"/tmp/{local_dir_name}", exist_ok=True)
+        os.makedirs(f"{local_dir_name}", exist_ok=True)
         return {
             "local_dir_name": local_dir_name,
             "gcs_dir_name": gcs_dir_name,
