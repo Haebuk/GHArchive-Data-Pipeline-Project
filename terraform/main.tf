@@ -44,6 +44,11 @@ resource "google_bigquery_dataset" "dataset" {
   project    = var.project
   location   = var.region
 }   
+resource "google_bigquery_dataset" "dbt_dataset" {
+  dataset_id = var.bigquery_dataset_dbt
+  project    = var.project
+  location   = var.region
+}   
 
 # External Table
 resource "google_bigquery_table" "gharchive" {

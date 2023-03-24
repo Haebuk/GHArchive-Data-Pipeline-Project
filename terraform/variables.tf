@@ -17,6 +17,12 @@ variable bigquery_dataset {
   type        = string
   default     = "github_dataset"
   description = "BigQuery dataset that raws data will be written to"
+
+}
+variable bigquery_dataset_dbt {
+  type        = string
+  default     = "gh_dbt"
+  description = "BigQuery dataset DBT"
 }
 
 variable storage_class {
