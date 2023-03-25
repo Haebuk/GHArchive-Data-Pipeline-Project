@@ -6,7 +6,8 @@
         "field": "created_at",
         "data_type": "timestamp",
         "granularity": "day"
-        }
+        },
+        incremental_strategy='insert_overwrite'
     )
 }}
 
