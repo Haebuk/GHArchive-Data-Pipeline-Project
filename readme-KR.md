@@ -2,6 +2,8 @@
 
 영어가 친숙하다면 [여기](readme.md)를 참조하세요.
 
+깃허브에서는 실제로 어떤 이벤트가 많이 발생할까요? 가장 많은 이벤트가 발생하는 레포지토리는 어디일까요? 이번 프로젝트를 통해 깃허브에서 가장 많이 발생하는 이벤트는 '푸시' 이벤트이며, 3월 가장 많은 이벤트가 발생한 곳은 [Lombiq/Orchard](https://github.com/Lombiq/Orchard)입니다!
+
 ## Dashboard view
 <img width="1199" alt="image" src="https://user-images.githubusercontent.com/68543150/227722276-d4940c03-fbce-4909-b26f-9f5d6be814c4.png">
 
@@ -73,7 +75,7 @@ Pandas보다 메모리 효율적으로 작동하며, Polars보다는 성능이 �
 - NO `WHERE` statement
   
   <img width="531" alt="image" src="https://user-images.githubusercontent.com/68543150/227723711-c9e5e5d6-b3c4-45e6-8c1a-669d47fdb312.png">
-  
+
 - With `Where` statement
 
   <img width="552" alt="image" src="https://user-images.githubusercontent.com/68543150/227723676-95286b36-cbca-47a2-8679-b7ee7aba2013.png">
