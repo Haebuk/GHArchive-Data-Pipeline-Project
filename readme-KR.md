@@ -1,5 +1,7 @@
 # Github Archive Data Pipeline Project
 
+영어가 친숙하다면 [여기](readme.md)를 참조하세요.
+
 ## Dashboard view
 <img width="1199" alt="image" src="https://user-images.githubusercontent.com/68543150/227722276-d4940c03-fbce-4909-b26f-9f5d6be814c4.png">
 
@@ -88,6 +90,9 @@ VM에 올리는 문서도 현재 제공되지 않고 있고, 관련 커뮤니티
 이대로 가단 프로젝트를 완성 못시킬 수도 있겠다 싶어 과감하게 Prefect를 버리고 좀 더 친숙한 Airflow로 옮겼습니다.
 
 제 생각엔 Prefect는 Airflow의 New Replacement가 될 순 없을 것 같습니다. (솔직히 너무 구려요. 나은게 없음)
+
+## DBT
+DBT 관련 문서는 [여기](gh_dbt/README-KR.md)를 참조하세요.
 
 ## Relative Links
 - 데이터셋 링크: https://www.gharchive.org/
