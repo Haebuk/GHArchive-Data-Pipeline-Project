@@ -22,8 +22,8 @@ with raw as
     {% if is_incremental() %}
 
         where year >= (select max(year) from {{ this }})
-        where month >= (select max(month) from {{ this }})
-        where day >= (select max(day) from {{ this }})
+        and month >= (select max(month) from {{ this }})
+        and day >= (select max(day) from {{ this }})
 
     {% endif %}
 )
