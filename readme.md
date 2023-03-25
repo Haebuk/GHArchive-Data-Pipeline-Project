@@ -1,6 +1,6 @@
 # Github Archive Data Pipeline Project
 
-If you're more comfortable with Korean, see [here] (readme-KR.md).
+If you're more comfortable with Korean, see [here](./readme-KR.md).
 
 ## Dashboard view
 <img width="1199" alt="image" src="https://user-images.githubusercontent.com/68543150/227722276-d4940c03-fbce-4909-b26f-9f5d6be814c4.png">
