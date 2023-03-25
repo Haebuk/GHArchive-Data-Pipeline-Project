@@ -17,3 +17,20 @@ models:
           combination_of_columns:
             - dt
             - type
+
+  - name: repo_counts
+    columns:
+      - name: dt
+        tests:
+          - not_null
+      - name: repo_name
+        tests:
+          - not_null
+      - name: count
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - dt
+            - repo_name
