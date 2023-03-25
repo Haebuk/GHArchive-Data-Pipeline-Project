@@ -43,13 +43,18 @@ https://github.com/keeyong/data-engineering-batch12/blob/main/docs/Airflow%202%2
 
 ### Github Archive Events Data Pipeline
 - Pipeline Flow
-![zoomcamp drawio](https://user-images.githubusercontent.com/68543150/227722102-39611cfc-6c21-4b46-85d5-8fa497fb10f0.svg)
+
+	![zoomcamp drawio](https://user-images.githubusercontent.com/68543150/227722102-39611cfc-6c21-4b46-85d5-8fa497fb10f0.svg)
 - DAG View
-![dag](https://user-images.githubusercontent.com/68543150/227722476-3ff3a70d-51c3-47bc-b6ba-e42409d47062.png)
+
+	![dag](https://user-images.githubusercontent.com/68543150/227722476-3ff3a70d-51c3-47bc-b6ba-e42409d47062.png)
 - DAG Grid View
-![dag_grid](https://user-images.githubusercontent.com/68543150/227722450-46329525-f7d3-4a34-8121-dcba843ebd94.png)
+
+	![dag_grid](https://user-images.githubusercontent.com/68543150/227722450-46329525-f7d3-4a34-8121-dcba843ebd94.png)
 - DAG Graph View
-<img width="1424" alt="image" src="https://user-images.githubusercontent.com/68543150/227723972-6248094c-61a0-4520-a880-73802a695607.png">
+
+	<img width="1424" alt="image" src="https://user-images.githubusercontent.com/68543150/227723972-6248094c-61a0-4520-a880-73802a695607.png">
+	
 [Airflow DAG File](dags/etl_web_to_gcs.py)
 
 Fetch data from the Github Archive every 30 minutes on the hour.
@@ -91,8 +96,6 @@ The documentation for uploading to a VM is not currently available, and the comm
 I realized that I might not be able to finish my malleable project, so I took the plunge and abandoned Prefect and moved to the more familiar Airflow.
 
 In my opinion, Prefect will never be the new replacement for Airflow (honestly, it just sucks, there's nothing better).
-
-Translated with www.DeepL.com/Translator (free version)
 
 ## DBT
 See [here] (gh_dbt/README.md) for DBT-related documentation.

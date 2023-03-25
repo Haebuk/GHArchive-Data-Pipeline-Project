@@ -43,13 +43,17 @@ https://github.com/keeyong/data-engineering-batch12/blob/main/docs/Airflow%202%2
 
 ### Github Archive Events Data Pipeline
 - Pipeline Flow
-![zoomcamp drawio](https://user-images.githubusercontent.com/68543150/227722102-39611cfc-6c21-4b46-85d5-8fa497fb10f0.svg)
+
+  ![zoomcamp drawio](https://user-images.githubusercontent.com/68543150/227722102-39611cfc-6c21-4b46-85d5-8fa497fb10f0.svg)
 - DAG View
-![dag](https://user-images.githubusercontent.com/68543150/227722476-3ff3a70d-51c3-47bc-b6ba-e42409d47062.png)
+
+  ![dag](https://user-images.githubusercontent.com/68543150/227722476-3ff3a70d-51c3-47bc-b6ba-e42409d47062.png)
 - DAG Grid View
-![dag_grid](https://user-images.githubusercontent.com/68543150/227722450-46329525-f7d3-4a34-8121-dcba843ebd94.png)
+
+  ![dag_grid](https://user-images.githubusercontent.com/68543150/227722450-46329525-f7d3-4a34-8121-dcba843ebd94.png)
 - DAG Graph View
-<img width="1424" alt="image" src="https://user-images.githubusercontent.com/68543150/227723972-6248094c-61a0-4520-a880-73802a695607.png">
+
+  <img width="1424" alt="image" src="https://user-images.githubusercontent.com/68543150/227723972-6248094c-61a0-4520-a880-73802a695607.png">
 [Airflow DAG File](dags/etl_web_to_gcs.py)
 
 Github Archive에서 매시 30분마다 데이터를 가져옵니다.
@@ -67,9 +71,11 @@ Pandas보다 메모리 효율적으로 작동하며, Polars보다는 성능이 �
 아래 사진은 정상적으로 외부 테이블에 파티셔닝이 적용된 모습을 보여줍니다. (바이트 279MB -> 52MB, `year`, `month`, `day`는 기존 데이터의 컬럼이 아닌 파티션 프리픽스입니다.)
 
 - NO `WHERE` statement
-<img width="531" alt="image" src="https://user-images.githubusercontent.com/68543150/227723711-c9e5e5d6-b3c4-45e6-8c1a-669d47fdb312.png">
+  
+  <img width="531" alt="image" src="https://user-images.githubusercontent.com/68543150/227723711-c9e5e5d6-b3c4-45e6-8c1a-669d47fdb312.png">
 - With `Where` statement
-<img width="552" alt="image" src="https://user-images.githubusercontent.com/68543150/227723676-95286b36-cbca-47a2-8679-b7ee7aba2013.png">
+
+  <img width="552" alt="image" src="https://user-images.githubusercontent.com/68543150/227723676-95286b36-cbca-47a2-8679-b7ee7aba2013.png">
 
 
 Airflow DAG 파일에 대한 별도의 CI/CD 파이프라인은 구축하지 않았고, 파일을 푸시하면 VM 내에서 풀하는 방식으로 코드를 업데이트 했습니다.
