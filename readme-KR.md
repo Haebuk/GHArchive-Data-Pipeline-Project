@@ -70,9 +70,6 @@ Pandas보다 메모리 효율적으로 작동하며, Polars보다는 성능이 �
 <img width="552" alt="image" src="https://user-images.githubusercontent.com/68543150/227723676-95286b36-cbca-47a2-8679-b7ee7aba2013.png">
 
 
-
-
-
 Airflow DAG 파일에 대한 별도의 CI/CD 파이프라인은 구축하지 않았고, 파일을 푸시하면 VM 내에서 풀하는 방식으로 코드를 업데이트 했습니다.
 ```
 $ sudo su airflow
@@ -83,6 +80,14 @@ $ cd GHArchive-Data-Pipeline-Project/ && \
   cp -r GHArchive-Data-Pipeline-Project/dags/* dags/
 ```
 
+### Why Not Use Prefect?
+처음엔 Prefect로 진행을 시도했는데, 일단 문서가 너무 불친절했습니다. 
+
+VM에 올리는 문서도 현재 제공되지 않고 있고, 관련 커뮤니티도 너무 작았습니다. 
+
+이대로 가단 프로젝트를 완성 못시킬 수도 있겠다 싶어 과감하게 Prefect를 버리고 좀 더 친숙한 Airflow로 옮겼습니다.
+
+제 생각엔 Prefect는 Airflow의 New Replacement가 될 순 없을 것 같습니다. (솔직히 너무 구려요. 나은게 없음)
 
 ## Relative Links
 - 데이터셋 링크: https://www.gharchive.org/
