@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: type_counts
+    columns:
+      - name: dt
+        tests:
+          - not_null
+      - name: type
+        tests:
+          - not_null
+      - name: count
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - dt
+            - type

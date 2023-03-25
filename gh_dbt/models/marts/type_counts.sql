@@ -1,11 +1,11 @@
 {{
     config(
         materialized='incremental',
-        unique_key=['date', 'type']
+        unique_key=['dt', 'type']
     )
 }}
 select
-    format_date('%Y-%m-%d', date_trunc(created_at, day)) as date,
+    date_trunc(created_at, hour) as dt,
     type,
     count(*) as count
 from {{ ref('stg_gh_events') }}
@@ -14,5 +14,4 @@ from {{ ref('stg_gh_events') }}
     where created_at >= (select max(created_at) from {{ this }})
 
 {% endif %}
-group by date, type
-order by date desc, count desc
+group by dt, type
