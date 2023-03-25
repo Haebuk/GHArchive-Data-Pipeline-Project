@@ -3,3 +3,4 @@ data
 *.parquet
 *.json
 *.json.gz
+adhocs
