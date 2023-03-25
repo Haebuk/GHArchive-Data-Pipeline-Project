@@ -54,7 +54,7 @@ https://github.com/keeyong/data-engineering-batch12/blob/main/docs/Airflow%202%2
 - DAG Graph View
 
 	<img width="1424" alt="image" src="https://user-images.githubusercontent.com/68543150/227723972-6248094c-61a0-4520-a880-73802a695607.png">
-	
+
 [Airflow DAG File](dags/etl_web_to_gcs.py)
 
 Fetch data from the Github Archive every 30 minutes on the hour.
@@ -74,6 +74,7 @@ The photo below shows the partitioning applied to the external table as normal. 
 
 - NO `WHERE` statement
 <img width="531" alt="image" src="https://user-images.githubusercontent.com/68543150/227723711-c9e5e5d6-b3c4-45e6-8c1a-669d47fdb312.png">
+
 - With `Where` statement
 <img width="552" alt="image" src="https://user-images.githubusercontent.com/68543150/227723676-95286b36-cbca-47a2-8679-b7ee7aba2013.png">
 
@@ -98,7 +99,7 @@ I realized that I might not be able to finish my malleable project, so I took th
 In my opinion, Prefect will never be the new replacement for Airflow (honestly, it just sucks, there's nothing better).
 
 ## DBT
-See [here] (gh_dbt/README.md) for DBT-related documentation.
+See [here](gh_dbt/README.md) for DBT-related documentation.
 
 ## Relative Links
 - Dataset Link: https://www.gharchive.org/

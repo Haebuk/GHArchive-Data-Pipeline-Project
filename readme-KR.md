@@ -73,6 +73,7 @@ Pandas보다 메모리 효율적으로 작동하며, Polars보다는 성능이 �
 - NO `WHERE` statement
   
   <img width="531" alt="image" src="https://user-images.githubusercontent.com/68543150/227723711-c9e5e5d6-b3c4-45e6-8c1a-669d47fdb312.png">
+  
 - With `Where` statement
 
   <img width="552" alt="image" src="https://user-images.githubusercontent.com/68543150/227723676-95286b36-cbca-47a2-8679-b7ee7aba2013.png">
