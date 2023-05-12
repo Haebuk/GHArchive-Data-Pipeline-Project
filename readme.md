@@ -105,4 +105,3 @@ See [here](gh_dbt/README.md) for DBT-related documentation.
 
 ## Relative Links
 - Dataset Link: https://www.gharchive.org/
-- Dashboard link (I will remove the link once the official project deadline is over): https://lookerstudio.google.com/reporting/f9c69c6f-6165-4c91-a8a8-a02b75c0c9f6/page/dtGKD
